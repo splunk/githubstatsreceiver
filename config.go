@@ -5,7 +5,7 @@ package githubstatsreceiver
 import (
 	"fmt"
 
-	"github.com/shalper2/splunk-otel-collector/internal/receiver/githubstatsreceiver/internal/metadata"
+	"github.com/splunk/githubstatsreceiver/internal/metadata"
 	"go.opentelemetry.io/collector/config/confighttp"
 	"go.opentelemetry.io/collector/receiver/scraperhelper"
 )

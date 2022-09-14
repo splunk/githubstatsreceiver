@@ -8,7 +8,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/shalper2/splunk-otel-collector/internal/receiver/githubstatsreceiver/internal/metadata"
+	"github.com/splunk/githubstatsreceiver/internal/metadata"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/pmetric"
