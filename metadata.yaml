@@ -1,0 +1,83 @@
+# "Receivers can contain a metadata.yaml file that documents the metrics that may be emitted by the receiver."
+# I have not seen this referenced in the documentation at all, but if you want your receiver to emit metrics, 
+# this is the simplest way to generate the code to support it.
+#
+# The file format documentation can be found here: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/cmd/mdatagen
+
+name: githubmetricsreceiver
+
+resource_attributes:
+  github.repo.name:
+    description: The name of the repo being scraped
+    type: string
+  github.repo.username:
+    description: Repository owners username
+
+metrics:
+  codechanges.additions: 
+    enabled: true
+    description: Code additions to repo 
+    unit: 1
+    gauge:
+      value_type: int
+  codechanges.deletions: 
+    enabled: true
+    description: Code deletions to repo 
+    unit: 1
+    gauge:
+      value_type: int
+  commits.total.ytd:
+    enabled: true
+    description: Number of total commits YTD
+    unit: 1
+    gauge:
+      value_type: int
+  commits.total.weekly:
+    enabled: true
+    description: Number of total commits this week (beginning Sunday)
+    unit: 1
+    gauge:
+      value_type: int
+  commits.sunday:
+    enabled: true
+    description: Number of commits on Sunday
+    unit: 1
+    gauge:
+      value_type: int 
+  commits.monday:
+    enabled: true
+    description: Number of commits on Monday
+    unit: 1
+    gauge:
+      value_type: int
+  commits.tuesday:
+    enabled: true
+    description: Number of commits on Tuesday 
+    unit: 1
+    gauge:
+      value_type: int
+  commits.wednesday:
+    enabled: true
+    description: Number of commits on Wednesday
+    unit: 1
+    gauge:
+      value_type: int
+  commits.thursday:
+    enabled: true
+    description: Number of commits on Thursday
+    unit: 1
+    gauge:
+      value_type: int
+  commits.friday:
+    enabled: true
+    description: Number of commits on Friday
+    unit: 1
+    gauge:
+      value_type: int
+  commits.saturday:
+    enabled: true
+    description: Number of commits on Saturday
+    unit: 1
+    gauge:
+      value_type: int
+

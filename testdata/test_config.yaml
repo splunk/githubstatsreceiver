@@ -1,0 +1,18 @@
+receivers:
+  githubmetrics:
+    metrics:
+      codechanges.additions:
+        enabled: true
+    api_key: abc123
+    repo_name: truck
+    git_username: buck
+    collection_interval: 3600s
+exporters:
+  nop:
+service:
+  pipelines:
+    metrics:
+      receivers:
+        - githubmetrics
+      exporters:
+        - nop
