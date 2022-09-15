@@ -17,72 +17,68 @@ type MetricSettings struct {
 
 // MetricsSettings provides settings for githubmetricsreceiver metrics.
 type MetricsSettings struct {
-	CodechangesAdditions MetricSettings `mapstructure:"codechanges.additions"`
-	CodechangesDeletions MetricSettings `mapstructure:"codechanges.deletions"`
-	CommitsFriday        MetricSettings `mapstructure:"commits.friday"`
-	CommitsMonday        MetricSettings `mapstructure:"commits.monday"`
-	CommitsSaturday      MetricSettings `mapstructure:"commits.saturday"`
-	CommitsSunday        MetricSettings `mapstructure:"commits.sunday"`
-	CommitsThursday      MetricSettings `mapstructure:"commits.thursday"`
-	CommitsTotalWeekly   MetricSettings `mapstructure:"commits.total.weekly"`
-	CommitsTotalYtd      MetricSettings `mapstructure:"commits.total.ytd"`
-	CommitsTuesday       MetricSettings `mapstructure:"commits.tuesday"`
-	CommitsWednesday     MetricSettings `mapstructure:"commits.wednesday"`
+	GithubCodechangesAdditions MetricSettings `mapstructure:"github.codechanges.additions"`
+	GithubCodechangesDeletions MetricSettings `mapstructure:"github.codechanges.deletions"`
+	GithubCommitsFriday        MetricSettings `mapstructure:"github.commits.friday"`
+	GithubCommitsMonday        MetricSettings `mapstructure:"github.commits.monday"`
+	GithubCommitsSaturday      MetricSettings `mapstructure:"github.commits.saturday"`
+	GithubCommitsSunday        MetricSettings `mapstructure:"github.commits.sunday"`
+	GithubCommitsThursday      MetricSettings `mapstructure:"github.commits.thursday"`
+	GithubCommitsTotalWeekly   MetricSettings `mapstructure:"github.commits.total.weekly"`
+	GithubCommitsTuesday       MetricSettings `mapstructure:"github.commits.tuesday"`
+	GithubCommitsWednesday     MetricSettings `mapstructure:"github.commits.wednesday"`
 }
 
 func DefaultMetricsSettings() MetricsSettings {
 	return MetricsSettings{
-		CodechangesAdditions: MetricSettings{
+		GithubCodechangesAdditions: MetricSettings{
 			Enabled: true,
 		},
-		CodechangesDeletions: MetricSettings{
+		GithubCodechangesDeletions: MetricSettings{
 			Enabled: true,
 		},
-		CommitsFriday: MetricSettings{
+		GithubCommitsFriday: MetricSettings{
 			Enabled: true,
 		},
-		CommitsMonday: MetricSettings{
+		GithubCommitsMonday: MetricSettings{
 			Enabled: true,
 		},
-		CommitsSaturday: MetricSettings{
+		GithubCommitsSaturday: MetricSettings{
 			Enabled: true,
 		},
-		CommitsSunday: MetricSettings{
+		GithubCommitsSunday: MetricSettings{
 			Enabled: true,
 		},
-		CommitsThursday: MetricSettings{
+		GithubCommitsThursday: MetricSettings{
 			Enabled: true,
 		},
-		CommitsTotalWeekly: MetricSettings{
+		GithubCommitsTotalWeekly: MetricSettings{
 			Enabled: true,
 		},
-		CommitsTotalYtd: MetricSettings{
+		GithubCommitsTuesday: MetricSettings{
 			Enabled: true,
 		},
-		CommitsTuesday: MetricSettings{
-			Enabled: true,
-		},
-		CommitsWednesday: MetricSettings{
+		GithubCommitsWednesday: MetricSettings{
 			Enabled: true,
 		},
 	}
 }
 
-type metricCodechangesAdditions struct {
+type metricGithubCodechangesAdditions struct {
 	data     pmetric.Metric // data buffer for generated metric.
 	settings MetricSettings // metric settings provided by user.
 	capacity int            // max observed number of data points added to the metric.
 }
 
-// init fills codechanges.additions metric with initial data.
-func (m *metricCodechangesAdditions) init() {
-	m.data.SetName("codechanges.additions")
+// init fills github.codechanges.additions metric with initial data.
+func (m *metricGithubCodechangesAdditions) init() {
+	m.data.SetName("github.codechanges.additions")
 	m.data.SetDescription("Code additions to repo")
 	m.data.SetUnit("1")
 	m.data.SetDataType(pmetric.MetricDataTypeGauge)
 }
 
-func (m *metricCodechangesAdditions) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
+func (m *metricGithubCodechangesAdditions) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
 	if !m.settings.Enabled {
 		return
 	}
@@ -93,14 +89,14 @@ func (m *metricCodechangesAdditions) recordDataPoint(start pcommon.Timestamp, ts
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
-func (m *metricCodechangesAdditions) updateCapacity() {
+func (m *metricGithubCodechangesAdditions) updateCapacity() {
 	if m.data.Gauge().DataPoints().Len() > m.capacity {
 		m.capacity = m.data.Gauge().DataPoints().Len()
 	}
 }
 
 // emit appends recorded metric data to a metrics slice and prepares it for recording another set of data points.
-func (m *metricCodechangesAdditions) emit(metrics pmetric.MetricSlice) {
+func (m *metricGithubCodechangesAdditions) emit(metrics pmetric.MetricSlice) {
 	if m.settings.Enabled && m.data.Gauge().DataPoints().Len() > 0 {
 		m.updateCapacity()
 		m.data.MoveTo(metrics.AppendEmpty())
@@ -108,8 +104,8 @@ func (m *metricCodechangesAdditions) emit(metrics pmetric.MetricSlice) {
 	}
 }
 
-func newMetricCodechangesAdditions(settings MetricSettings) metricCodechangesAdditions {
-	m := metricCodechangesAdditions{settings: settings}
+func newMetricGithubCodechangesAdditions(settings MetricSettings) metricGithubCodechangesAdditions {
+	m := metricGithubCodechangesAdditions{settings: settings}
 	if settings.Enabled {
 		m.data = pmetric.NewMetric()
 		m.init()
@@ -117,21 +113,21 @@ func newMetricCodechangesAdditions(settings MetricSettings) metricCodechangesAdd
 	return m
 }
 
-type metricCodechangesDeletions struct {
+type metricGithubCodechangesDeletions struct {
 	data     pmetric.Metric // data buffer for generated metric.
 	settings MetricSettings // metric settings provided by user.
 	capacity int            // max observed number of data points added to the metric.
 }
 
-// init fills codechanges.deletions metric with initial data.
-func (m *metricCodechangesDeletions) init() {
-	m.data.SetName("codechanges.deletions")
+// init fills github.codechanges.deletions metric with initial data.
+func (m *metricGithubCodechangesDeletions) init() {
+	m.data.SetName("github.codechanges.deletions")
 	m.data.SetDescription("Code deletions to repo")
 	m.data.SetUnit("1")
 	m.data.SetDataType(pmetric.MetricDataTypeGauge)
 }
 
-func (m *metricCodechangesDeletions) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
+func (m *metricGithubCodechangesDeletions) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
 	if !m.settings.Enabled {
 		return
 	}
@@ -142,14 +138,14 @@ func (m *metricCodechangesDeletions) recordDataPoint(start pcommon.Timestamp, ts
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
-func (m *metricCodechangesDeletions) updateCapacity() {
+func (m *metricGithubCodechangesDeletions) updateCapacity() {
 	if m.data.Gauge().DataPoints().Len() > m.capacity {
 		m.capacity = m.data.Gauge().DataPoints().Len()
 	}
 }
 
 // emit appends recorded metric data to a metrics slice and prepares it for recording another set of data points.
-func (m *metricCodechangesDeletions) emit(metrics pmetric.MetricSlice) {
+func (m *metricGithubCodechangesDeletions) emit(metrics pmetric.MetricSlice) {
 	if m.settings.Enabled && m.data.Gauge().DataPoints().Len() > 0 {
 		m.updateCapacity()
 		m.data.MoveTo(metrics.AppendEmpty())
@@ -157,8 +153,8 @@ func (m *metricCodechangesDeletions) emit(metrics pmetric.MetricSlice) {
 	}
 }
 
-func newMetricCodechangesDeletions(settings MetricSettings) metricCodechangesDeletions {
-	m := metricCodechangesDeletions{settings: settings}
+func newMetricGithubCodechangesDeletions(settings MetricSettings) metricGithubCodechangesDeletions {
+	m := metricGithubCodechangesDeletions{settings: settings}
 	if settings.Enabled {
 		m.data = pmetric.NewMetric()
 		m.init()
@@ -166,21 +162,21 @@ func newMetricCodechangesDeletions(settings MetricSettings) metricCodechangesDel
 	return m
 }
 
-type metricCommitsFriday struct {
+type metricGithubCommitsFriday struct {
 	data     pmetric.Metric // data buffer for generated metric.
 	settings MetricSettings // metric settings provided by user.
 	capacity int            // max observed number of data points added to the metric.
 }
 
-// init fills commits.friday metric with initial data.
-func (m *metricCommitsFriday) init() {
-	m.data.SetName("commits.friday")
+// init fills github.commits.friday metric with initial data.
+func (m *metricGithubCommitsFriday) init() {
+	m.data.SetName("github.commits.friday")
 	m.data.SetDescription("Number of commits on Friday")
 	m.data.SetUnit("1")
 	m.data.SetDataType(pmetric.MetricDataTypeGauge)
 }
 
-func (m *metricCommitsFriday) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
+func (m *metricGithubCommitsFriday) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
 	if !m.settings.Enabled {
 		return
 	}
@@ -191,14 +187,14 @@ func (m *metricCommitsFriday) recordDataPoint(start pcommon.Timestamp, ts pcommo
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
-func (m *metricCommitsFriday) updateCapacity() {
+func (m *metricGithubCommitsFriday) updateCapacity() {
 	if m.data.Gauge().DataPoints().Len() > m.capacity {
 		m.capacity = m.data.Gauge().DataPoints().Len()
 	}
 }
 
 // emit appends recorded metric data to a metrics slice and prepares it for recording another set of data points.
-func (m *metricCommitsFriday) emit(metrics pmetric.MetricSlice) {
+func (m *metricGithubCommitsFriday) emit(metrics pmetric.MetricSlice) {
 	if m.settings.Enabled && m.data.Gauge().DataPoints().Len() > 0 {
 		m.updateCapacity()
 		m.data.MoveTo(metrics.AppendEmpty())
@@ -206,8 +202,8 @@ func (m *metricCommitsFriday) emit(metrics pmetric.MetricSlice) {
 	}
 }
 
-func newMetricCommitsFriday(settings MetricSettings) metricCommitsFriday {
-	m := metricCommitsFriday{settings: settings}
+func newMetricGithubCommitsFriday(settings MetricSettings) metricGithubCommitsFriday {
+	m := metricGithubCommitsFriday{settings: settings}
 	if settings.Enabled {
 		m.data = pmetric.NewMetric()
 		m.init()
@@ -215,21 +211,21 @@ func newMetricCommitsFriday(settings MetricSettings) metricCommitsFriday {
 	return m
 }
 
-type metricCommitsMonday struct {
+type metricGithubCommitsMonday struct {
 	data     pmetric.Metric // data buffer for generated metric.
 	settings MetricSettings // metric settings provided by user.
 	capacity int            // max observed number of data points added to the metric.
 }
 
-// init fills commits.monday metric with initial data.
-func (m *metricCommitsMonday) init() {
-	m.data.SetName("commits.monday")
+// init fills github.commits.monday metric with initial data.
+func (m *metricGithubCommitsMonday) init() {
+	m.data.SetName("github.commits.monday")
 	m.data.SetDescription("Number of commits on Monday")
 	m.data.SetUnit("1")
 	m.data.SetDataType(pmetric.MetricDataTypeGauge)
 }
 
-func (m *metricCommitsMonday) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
+func (m *metricGithubCommitsMonday) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
 	if !m.settings.Enabled {
 		return
 	}
@@ -240,14 +236,14 @@ func (m *metricCommitsMonday) recordDataPoint(start pcommon.Timestamp, ts pcommo
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
-func (m *metricCommitsMonday) updateCapacity() {
+func (m *metricGithubCommitsMonday) updateCapacity() {
 	if m.data.Gauge().DataPoints().Len() > m.capacity {
 		m.capacity = m.data.Gauge().DataPoints().Len()
 	}
 }
 
 // emit appends recorded metric data to a metrics slice and prepares it for recording another set of data points.
-func (m *metricCommitsMonday) emit(metrics pmetric.MetricSlice) {
+func (m *metricGithubCommitsMonday) emit(metrics pmetric.MetricSlice) {
 	if m.settings.Enabled && m.data.Gauge().DataPoints().Len() > 0 {
 		m.updateCapacity()
 		m.data.MoveTo(metrics.AppendEmpty())
@@ -255,8 +251,8 @@ func (m *metricCommitsMonday) emit(metrics pmetric.MetricSlice) {
 	}
 }
 
-func newMetricCommitsMonday(settings MetricSettings) metricCommitsMonday {
-	m := metricCommitsMonday{settings: settings}
+func newMetricGithubCommitsMonday(settings MetricSettings) metricGithubCommitsMonday {
+	m := metricGithubCommitsMonday{settings: settings}
 	if settings.Enabled {
 		m.data = pmetric.NewMetric()
 		m.init()
@@ -264,21 +260,21 @@ func newMetricCommitsMonday(settings MetricSettings) metricCommitsMonday {
 	return m
 }
 
-type metricCommitsSaturday struct {
+type metricGithubCommitsSaturday struct {
 	data     pmetric.Metric // data buffer for generated metric.
 	settings MetricSettings // metric settings provided by user.
 	capacity int            // max observed number of data points added to the metric.
 }
 
-// init fills commits.saturday metric with initial data.
-func (m *metricCommitsSaturday) init() {
-	m.data.SetName("commits.saturday")
+// init fills github.commits.saturday metric with initial data.
+func (m *metricGithubCommitsSaturday) init() {
+	m.data.SetName("github.commits.saturday")
 	m.data.SetDescription("Number of commits on Saturday")
 	m.data.SetUnit("1")
 	m.data.SetDataType(pmetric.MetricDataTypeGauge)
 }
 
-func (m *metricCommitsSaturday) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
+func (m *metricGithubCommitsSaturday) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
 	if !m.settings.Enabled {
 		return
 	}
@@ -289,14 +285,14 @@ func (m *metricCommitsSaturday) recordDataPoint(start pcommon.Timestamp, ts pcom
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
-func (m *metricCommitsSaturday) updateCapacity() {
+func (m *metricGithubCommitsSaturday) updateCapacity() {
 	if m.data.Gauge().DataPoints().Len() > m.capacity {
 		m.capacity = m.data.Gauge().DataPoints().Len()
 	}
 }
 
 // emit appends recorded metric data to a metrics slice and prepares it for recording another set of data points.
-func (m *metricCommitsSaturday) emit(metrics pmetric.MetricSlice) {
+func (m *metricGithubCommitsSaturday) emit(metrics pmetric.MetricSlice) {
 	if m.settings.Enabled && m.data.Gauge().DataPoints().Len() > 0 {
 		m.updateCapacity()
 		m.data.MoveTo(metrics.AppendEmpty())
@@ -304,8 +300,8 @@ func (m *metricCommitsSaturday) emit(metrics pmetric.MetricSlice) {
 	}
 }
 
-func newMetricCommitsSaturday(settings MetricSettings) metricCommitsSaturday {
-	m := metricCommitsSaturday{settings: settings}
+func newMetricGithubCommitsSaturday(settings MetricSettings) metricGithubCommitsSaturday {
+	m := metricGithubCommitsSaturday{settings: settings}
 	if settings.Enabled {
 		m.data = pmetric.NewMetric()
 		m.init()
@@ -313,21 +309,21 @@ func newMetricCommitsSaturday(settings MetricSettings) metricCommitsSaturday {
 	return m
 }
 
-type metricCommitsSunday struct {
+type metricGithubCommitsSunday struct {
 	data     pmetric.Metric // data buffer for generated metric.
 	settings MetricSettings // metric settings provided by user.
 	capacity int            // max observed number of data points added to the metric.
 }
 
-// init fills commits.sunday metric with initial data.
-func (m *metricCommitsSunday) init() {
-	m.data.SetName("commits.sunday")
+// init fills github.commits.sunday metric with initial data.
+func (m *metricGithubCommitsSunday) init() {
+	m.data.SetName("github.commits.sunday")
 	m.data.SetDescription("Number of commits on Sunday")
 	m.data.SetUnit("1")
 	m.data.SetDataType(pmetric.MetricDataTypeGauge)
 }
 
-func (m *metricCommitsSunday) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
+func (m *metricGithubCommitsSunday) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
 	if !m.settings.Enabled {
 		return
 	}
@@ -338,14 +334,14 @@ func (m *metricCommitsSunday) recordDataPoint(start pcommon.Timestamp, ts pcommo
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
-func (m *metricCommitsSunday) updateCapacity() {
+func (m *metricGithubCommitsSunday) updateCapacity() {
 	if m.data.Gauge().DataPoints().Len() > m.capacity {
 		m.capacity = m.data.Gauge().DataPoints().Len()
 	}
 }
 
 // emit appends recorded metric data to a metrics slice and prepares it for recording another set of data points.
-func (m *metricCommitsSunday) emit(metrics pmetric.MetricSlice) {
+func (m *metricGithubCommitsSunday) emit(metrics pmetric.MetricSlice) {
 	if m.settings.Enabled && m.data.Gauge().DataPoints().Len() > 0 {
 		m.updateCapacity()
 		m.data.MoveTo(metrics.AppendEmpty())
@@ -353,8 +349,8 @@ func (m *metricCommitsSunday) emit(metrics pmetric.MetricSlice) {
 	}
 }
 
-func newMetricCommitsSunday(settings MetricSettings) metricCommitsSunday {
-	m := metricCommitsSunday{settings: settings}
+func newMetricGithubCommitsSunday(settings MetricSettings) metricGithubCommitsSunday {
+	m := metricGithubCommitsSunday{settings: settings}
 	if settings.Enabled {
 		m.data = pmetric.NewMetric()
 		m.init()
@@ -362,21 +358,21 @@ func newMetricCommitsSunday(settings MetricSettings) metricCommitsSunday {
 	return m
 }
 
-type metricCommitsThursday struct {
+type metricGithubCommitsThursday struct {
 	data     pmetric.Metric // data buffer for generated metric.
 	settings MetricSettings // metric settings provided by user.
 	capacity int            // max observed number of data points added to the metric.
 }
 
-// init fills commits.thursday metric with initial data.
-func (m *metricCommitsThursday) init() {
-	m.data.SetName("commits.thursday")
+// init fills github.commits.thursday metric with initial data.
+func (m *metricGithubCommitsThursday) init() {
+	m.data.SetName("github.commits.thursday")
 	m.data.SetDescription("Number of commits on Thursday")
 	m.data.SetUnit("1")
 	m.data.SetDataType(pmetric.MetricDataTypeGauge)
 }
 
-func (m *metricCommitsThursday) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
+func (m *metricGithubCommitsThursday) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
 	if !m.settings.Enabled {
 		return
 	}
@@ -387,14 +383,14 @@ func (m *metricCommitsThursday) recordDataPoint(start pcommon.Timestamp, ts pcom
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
-func (m *metricCommitsThursday) updateCapacity() {
+func (m *metricGithubCommitsThursday) updateCapacity() {
 	if m.data.Gauge().DataPoints().Len() > m.capacity {
 		m.capacity = m.data.Gauge().DataPoints().Len()
 	}
 }
 
 // emit appends recorded metric data to a metrics slice and prepares it for recording another set of data points.
-func (m *metricCommitsThursday) emit(metrics pmetric.MetricSlice) {
+func (m *metricGithubCommitsThursday) emit(metrics pmetric.MetricSlice) {
 	if m.settings.Enabled && m.data.Gauge().DataPoints().Len() > 0 {
 		m.updateCapacity()
 		m.data.MoveTo(metrics.AppendEmpty())
@@ -402,8 +398,8 @@ func (m *metricCommitsThursday) emit(metrics pmetric.MetricSlice) {
 	}
 }
 
-func newMetricCommitsThursday(settings MetricSettings) metricCommitsThursday {
-	m := metricCommitsThursday{settings: settings}
+func newMetricGithubCommitsThursday(settings MetricSettings) metricGithubCommitsThursday {
+	m := metricGithubCommitsThursday{settings: settings}
 	if settings.Enabled {
 		m.data = pmetric.NewMetric()
 		m.init()
@@ -411,21 +407,21 @@ func newMetricCommitsThursday(settings MetricSettings) metricCommitsThursday {
 	return m
 }
 
-type metricCommitsTotalWeekly struct {
+type metricGithubCommitsTotalWeekly struct {
 	data     pmetric.Metric // data buffer for generated metric.
 	settings MetricSettings // metric settings provided by user.
 	capacity int            // max observed number of data points added to the metric.
 }
 
-// init fills commits.total.weekly metric with initial data.
-func (m *metricCommitsTotalWeekly) init() {
-	m.data.SetName("commits.total.weekly")
+// init fills github.commits.total.weekly metric with initial data.
+func (m *metricGithubCommitsTotalWeekly) init() {
+	m.data.SetName("github.commits.total.weekly")
 	m.data.SetDescription("Number of total commits this week (beginning Sunday)")
 	m.data.SetUnit("1")
 	m.data.SetDataType(pmetric.MetricDataTypeGauge)
 }
 
-func (m *metricCommitsTotalWeekly) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
+func (m *metricGithubCommitsTotalWeekly) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
 	if !m.settings.Enabled {
 		return
 	}
@@ -436,14 +432,14 @@ func (m *metricCommitsTotalWeekly) recordDataPoint(start pcommon.Timestamp, ts p
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
-func (m *metricCommitsTotalWeekly) updateCapacity() {
+func (m *metricGithubCommitsTotalWeekly) updateCapacity() {
 	if m.data.Gauge().DataPoints().Len() > m.capacity {
 		m.capacity = m.data.Gauge().DataPoints().Len()
 	}
 }
 
 // emit appends recorded metric data to a metrics slice and prepares it for recording another set of data points.
-func (m *metricCommitsTotalWeekly) emit(metrics pmetric.MetricSlice) {
+func (m *metricGithubCommitsTotalWeekly) emit(metrics pmetric.MetricSlice) {
 	if m.settings.Enabled && m.data.Gauge().DataPoints().Len() > 0 {
 		m.updateCapacity()
 		m.data.MoveTo(metrics.AppendEmpty())
@@ -451,8 +447,8 @@ func (m *metricCommitsTotalWeekly) emit(metrics pmetric.MetricSlice) {
 	}
 }
 
-func newMetricCommitsTotalWeekly(settings MetricSettings) metricCommitsTotalWeekly {
-	m := metricCommitsTotalWeekly{settings: settings}
+func newMetricGithubCommitsTotalWeekly(settings MetricSettings) metricGithubCommitsTotalWeekly {
+	m := metricGithubCommitsTotalWeekly{settings: settings}
 	if settings.Enabled {
 		m.data = pmetric.NewMetric()
 		m.init()
@@ -460,70 +456,21 @@ func newMetricCommitsTotalWeekly(settings MetricSettings) metricCommitsTotalWeek
 	return m
 }
 
-type metricCommitsTotalYtd struct {
+type metricGithubCommitsTuesday struct {
 	data     pmetric.Metric // data buffer for generated metric.
 	settings MetricSettings // metric settings provided by user.
 	capacity int            // max observed number of data points added to the metric.
 }
 
-// init fills commits.total.ytd metric with initial data.
-func (m *metricCommitsTotalYtd) init() {
-	m.data.SetName("commits.total.ytd")
-	m.data.SetDescription("Number of total commits YTD")
-	m.data.SetUnit("1")
-	m.data.SetDataType(pmetric.MetricDataTypeGauge)
-}
-
-func (m *metricCommitsTotalYtd) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
-	if !m.settings.Enabled {
-		return
-	}
-	dp := m.data.Gauge().DataPoints().AppendEmpty()
-	dp.SetStartTimestamp(start)
-	dp.SetTimestamp(ts)
-	dp.SetIntVal(val)
-}
-
-// updateCapacity saves max length of data point slices that will be used for the slice capacity.
-func (m *metricCommitsTotalYtd) updateCapacity() {
-	if m.data.Gauge().DataPoints().Len() > m.capacity {
-		m.capacity = m.data.Gauge().DataPoints().Len()
-	}
-}
-
-// emit appends recorded metric data to a metrics slice and prepares it for recording another set of data points.
-func (m *metricCommitsTotalYtd) emit(metrics pmetric.MetricSlice) {
-	if m.settings.Enabled && m.data.Gauge().DataPoints().Len() > 0 {
-		m.updateCapacity()
-		m.data.MoveTo(metrics.AppendEmpty())
-		m.init()
-	}
-}
-
-func newMetricCommitsTotalYtd(settings MetricSettings) metricCommitsTotalYtd {
-	m := metricCommitsTotalYtd{settings: settings}
-	if settings.Enabled {
-		m.data = pmetric.NewMetric()
-		m.init()
-	}
-	return m
-}
-
-type metricCommitsTuesday struct {
-	data     pmetric.Metric // data buffer for generated metric.
-	settings MetricSettings // metric settings provided by user.
-	capacity int            // max observed number of data points added to the metric.
-}
-
-// init fills commits.tuesday metric with initial data.
-func (m *metricCommitsTuesday) init() {
-	m.data.SetName("commits.tuesday")
+// init fills github.commits.tuesday metric with initial data.
+func (m *metricGithubCommitsTuesday) init() {
+	m.data.SetName("github.commits.tuesday")
 	m.data.SetDescription("Number of commits on Tuesday")
 	m.data.SetUnit("1")
 	m.data.SetDataType(pmetric.MetricDataTypeGauge)
 }
 
-func (m *metricCommitsTuesday) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
+func (m *metricGithubCommitsTuesday) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
 	if !m.settings.Enabled {
 		return
 	}
@@ -534,14 +481,14 @@ func (m *metricCommitsTuesday) recordDataPoint(start pcommon.Timestamp, ts pcomm
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
-func (m *metricCommitsTuesday) updateCapacity() {
+func (m *metricGithubCommitsTuesday) updateCapacity() {
 	if m.data.Gauge().DataPoints().Len() > m.capacity {
 		m.capacity = m.data.Gauge().DataPoints().Len()
 	}
 }
 
 // emit appends recorded metric data to a metrics slice and prepares it for recording another set of data points.
-func (m *metricCommitsTuesday) emit(metrics pmetric.MetricSlice) {
+func (m *metricGithubCommitsTuesday) emit(metrics pmetric.MetricSlice) {
 	if m.settings.Enabled && m.data.Gauge().DataPoints().Len() > 0 {
 		m.updateCapacity()
 		m.data.MoveTo(metrics.AppendEmpty())
@@ -549,8 +496,8 @@ func (m *metricCommitsTuesday) emit(metrics pmetric.MetricSlice) {
 	}
 }
 
-func newMetricCommitsTuesday(settings MetricSettings) metricCommitsTuesday {
-	m := metricCommitsTuesday{settings: settings}
+func newMetricGithubCommitsTuesday(settings MetricSettings) metricGithubCommitsTuesday {
+	m := metricGithubCommitsTuesday{settings: settings}
 	if settings.Enabled {
 		m.data = pmetric.NewMetric()
 		m.init()
@@ -558,21 +505,21 @@ func newMetricCommitsTuesday(settings MetricSettings) metricCommitsTuesday {
 	return m
 }
 
-type metricCommitsWednesday struct {
+type metricGithubCommitsWednesday struct {
 	data     pmetric.Metric // data buffer for generated metric.
 	settings MetricSettings // metric settings provided by user.
 	capacity int            // max observed number of data points added to the metric.
 }
 
-// init fills commits.wednesday metric with initial data.
-func (m *metricCommitsWednesday) init() {
-	m.data.SetName("commits.wednesday")
+// init fills github.commits.wednesday metric with initial data.
+func (m *metricGithubCommitsWednesday) init() {
+	m.data.SetName("github.commits.wednesday")
 	m.data.SetDescription("Number of commits on Wednesday")
 	m.data.SetUnit("1")
 	m.data.SetDataType(pmetric.MetricDataTypeGauge)
 }
 
-func (m *metricCommitsWednesday) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
+func (m *metricGithubCommitsWednesday) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
 	if !m.settings.Enabled {
 		return
 	}
@@ -583,14 +530,14 @@ func (m *metricCommitsWednesday) recordDataPoint(start pcommon.Timestamp, ts pco
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
-func (m *metricCommitsWednesday) updateCapacity() {
+func (m *metricGithubCommitsWednesday) updateCapacity() {
 	if m.data.Gauge().DataPoints().Len() > m.capacity {
 		m.capacity = m.data.Gauge().DataPoints().Len()
 	}
 }
 
 // emit appends recorded metric data to a metrics slice and prepares it for recording another set of data points.
-func (m *metricCommitsWednesday) emit(metrics pmetric.MetricSlice) {
+func (m *metricGithubCommitsWednesday) emit(metrics pmetric.MetricSlice) {
 	if m.settings.Enabled && m.data.Gauge().DataPoints().Len() > 0 {
 		m.updateCapacity()
 		m.data.MoveTo(metrics.AppendEmpty())
@@ -598,8 +545,8 @@ func (m *metricCommitsWednesday) emit(metrics pmetric.MetricSlice) {
 	}
 }
 
-func newMetricCommitsWednesday(settings MetricSettings) metricCommitsWednesday {
-	m := metricCommitsWednesday{settings: settings}
+func newMetricGithubCommitsWednesday(settings MetricSettings) metricGithubCommitsWednesday {
+	m := metricGithubCommitsWednesday{settings: settings}
 	if settings.Enabled {
 		m.data = pmetric.NewMetric()
 		m.init()
@@ -610,22 +557,21 @@ func newMetricCommitsWednesday(settings MetricSettings) metricCommitsWednesday {
 // MetricsBuilder provides an interface for scrapers to report metrics while taking care of all the transformations
 // required to produce metric representation defined in metadata and user settings.
 type MetricsBuilder struct {
-	startTime                  pcommon.Timestamp   // start time that will be applied to all recorded data points.
-	metricsCapacity            int                 // maximum observed number of metrics per resource.
-	resourceCapacity           int                 // maximum observed number of resource attributes.
-	metricsBuffer              pmetric.Metrics     // accumulates metrics data before emitting.
-	buildInfo                  component.BuildInfo // contains version information
-	metricCodechangesAdditions metricCodechangesAdditions
-	metricCodechangesDeletions metricCodechangesDeletions
-	metricCommitsFriday        metricCommitsFriday
-	metricCommitsMonday        metricCommitsMonday
-	metricCommitsSaturday      metricCommitsSaturday
-	metricCommitsSunday        metricCommitsSunday
-	metricCommitsThursday      metricCommitsThursday
-	metricCommitsTotalWeekly   metricCommitsTotalWeekly
-	metricCommitsTotalYtd      metricCommitsTotalYtd
-	metricCommitsTuesday       metricCommitsTuesday
-	metricCommitsWednesday     metricCommitsWednesday
+	startTime                        pcommon.Timestamp   // start time that will be applied to all recorded data points.
+	metricsCapacity                  int                 // maximum observed number of metrics per resource.
+	resourceCapacity                 int                 // maximum observed number of resource attributes.
+	metricsBuffer                    pmetric.Metrics     // accumulates metrics data before emitting.
+	buildInfo                        component.BuildInfo // contains version information
+	metricGithubCodechangesAdditions metricGithubCodechangesAdditions
+	metricGithubCodechangesDeletions metricGithubCodechangesDeletions
+	metricGithubCommitsFriday        metricGithubCommitsFriday
+	metricGithubCommitsMonday        metricGithubCommitsMonday
+	metricGithubCommitsSaturday      metricGithubCommitsSaturday
+	metricGithubCommitsSunday        metricGithubCommitsSunday
+	metricGithubCommitsThursday      metricGithubCommitsThursday
+	metricGithubCommitsTotalWeekly   metricGithubCommitsTotalWeekly
+	metricGithubCommitsTuesday       metricGithubCommitsTuesday
+	metricGithubCommitsWednesday     metricGithubCommitsWednesday
 }
 
 // metricBuilderOption applies changes to default metrics builder.
@@ -640,20 +586,19 @@ func WithStartTime(startTime pcommon.Timestamp) metricBuilderOption {
 
 func NewMetricsBuilder(settings MetricsSettings, buildInfo component.BuildInfo, options ...metricBuilderOption) *MetricsBuilder {
 	mb := &MetricsBuilder{
-		startTime:                  pcommon.NewTimestampFromTime(time.Now()),
-		metricsBuffer:              pmetric.NewMetrics(),
-		buildInfo:                  buildInfo,
-		metricCodechangesAdditions: newMetricCodechangesAdditions(settings.CodechangesAdditions),
-		metricCodechangesDeletions: newMetricCodechangesDeletions(settings.CodechangesDeletions),
-		metricCommitsFriday:        newMetricCommitsFriday(settings.CommitsFriday),
-		metricCommitsMonday:        newMetricCommitsMonday(settings.CommitsMonday),
-		metricCommitsSaturday:      newMetricCommitsSaturday(settings.CommitsSaturday),
-		metricCommitsSunday:        newMetricCommitsSunday(settings.CommitsSunday),
-		metricCommitsThursday:      newMetricCommitsThursday(settings.CommitsThursday),
-		metricCommitsTotalWeekly:   newMetricCommitsTotalWeekly(settings.CommitsTotalWeekly),
-		metricCommitsTotalYtd:      newMetricCommitsTotalYtd(settings.CommitsTotalYtd),
-		metricCommitsTuesday:       newMetricCommitsTuesday(settings.CommitsTuesday),
-		metricCommitsWednesday:     newMetricCommitsWednesday(settings.CommitsWednesday),
+		startTime:                        pcommon.NewTimestampFromTime(time.Now()),
+		metricsBuffer:                    pmetric.NewMetrics(),
+		buildInfo:                        buildInfo,
+		metricGithubCodechangesAdditions: newMetricGithubCodechangesAdditions(settings.GithubCodechangesAdditions),
+		metricGithubCodechangesDeletions: newMetricGithubCodechangesDeletions(settings.GithubCodechangesDeletions),
+		metricGithubCommitsFriday:        newMetricGithubCommitsFriday(settings.GithubCommitsFriday),
+		metricGithubCommitsMonday:        newMetricGithubCommitsMonday(settings.GithubCommitsMonday),
+		metricGithubCommitsSaturday:      newMetricGithubCommitsSaturday(settings.GithubCommitsSaturday),
+		metricGithubCommitsSunday:        newMetricGithubCommitsSunday(settings.GithubCommitsSunday),
+		metricGithubCommitsThursday:      newMetricGithubCommitsThursday(settings.GithubCommitsThursday),
+		metricGithubCommitsTotalWeekly:   newMetricGithubCommitsTotalWeekly(settings.GithubCommitsTotalWeekly),
+		metricGithubCommitsTuesday:       newMetricGithubCommitsTuesday(settings.GithubCommitsTuesday),
+		metricGithubCommitsWednesday:     newMetricGithubCommitsWednesday(settings.GithubCommitsWednesday),
 	}
 	for _, op := range options {
 		op(mb)
@@ -720,17 +665,16 @@ func (mb *MetricsBuilder) EmitForResource(rmo ...ResourceMetricsOption) {
 	ils.Scope().SetName("otelcol/githubmetricsreceiver")
 	ils.Scope().SetVersion(mb.buildInfo.Version)
 	ils.Metrics().EnsureCapacity(mb.metricsCapacity)
-	mb.metricCodechangesAdditions.emit(ils.Metrics())
-	mb.metricCodechangesDeletions.emit(ils.Metrics())
-	mb.metricCommitsFriday.emit(ils.Metrics())
-	mb.metricCommitsMonday.emit(ils.Metrics())
-	mb.metricCommitsSaturday.emit(ils.Metrics())
-	mb.metricCommitsSunday.emit(ils.Metrics())
-	mb.metricCommitsThursday.emit(ils.Metrics())
-	mb.metricCommitsTotalWeekly.emit(ils.Metrics())
-	mb.metricCommitsTotalYtd.emit(ils.Metrics())
-	mb.metricCommitsTuesday.emit(ils.Metrics())
-	mb.metricCommitsWednesday.emit(ils.Metrics())
+	mb.metricGithubCodechangesAdditions.emit(ils.Metrics())
+	mb.metricGithubCodechangesDeletions.emit(ils.Metrics())
+	mb.metricGithubCommitsFriday.emit(ils.Metrics())
+	mb.metricGithubCommitsMonday.emit(ils.Metrics())
+	mb.metricGithubCommitsSaturday.emit(ils.Metrics())
+	mb.metricGithubCommitsSunday.emit(ils.Metrics())
+	mb.metricGithubCommitsThursday.emit(ils.Metrics())
+	mb.metricGithubCommitsTotalWeekly.emit(ils.Metrics())
+	mb.metricGithubCommitsTuesday.emit(ils.Metrics())
+	mb.metricGithubCommitsWednesday.emit(ils.Metrics())
 	for _, op := range rmo {
 		op(rm)
 	}
@@ -750,59 +694,54 @@ func (mb *MetricsBuilder) Emit(rmo ...ResourceMetricsOption) pmetric.Metrics {
 	return metrics
 }
 
-// RecordCodechangesAdditionsDataPoint adds a data point to codechanges.additions metric.
-func (mb *MetricsBuilder) RecordCodechangesAdditionsDataPoint(ts pcommon.Timestamp, val int64) {
-	mb.metricCodechangesAdditions.recordDataPoint(mb.startTime, ts, val)
+// RecordGithubCodechangesAdditionsDataPoint adds a data point to github.codechanges.additions metric.
+func (mb *MetricsBuilder) RecordGithubCodechangesAdditionsDataPoint(ts pcommon.Timestamp, val int64) {
+	mb.metricGithubCodechangesAdditions.recordDataPoint(mb.startTime, ts, val)
 }
 
-// RecordCodechangesDeletionsDataPoint adds a data point to codechanges.deletions metric.
-func (mb *MetricsBuilder) RecordCodechangesDeletionsDataPoint(ts pcommon.Timestamp, val int64) {
-	mb.metricCodechangesDeletions.recordDataPoint(mb.startTime, ts, val)
+// RecordGithubCodechangesDeletionsDataPoint adds a data point to github.codechanges.deletions metric.
+func (mb *MetricsBuilder) RecordGithubCodechangesDeletionsDataPoint(ts pcommon.Timestamp, val int64) {
+	mb.metricGithubCodechangesDeletions.recordDataPoint(mb.startTime, ts, val)
 }
 
-// RecordCommitsFridayDataPoint adds a data point to commits.friday metric.
-func (mb *MetricsBuilder) RecordCommitsFridayDataPoint(ts pcommon.Timestamp, val int64) {
-	mb.metricCommitsFriday.recordDataPoint(mb.startTime, ts, val)
+// RecordGithubCommitsFridayDataPoint adds a data point to github.commits.friday metric.
+func (mb *MetricsBuilder) RecordGithubCommitsFridayDataPoint(ts pcommon.Timestamp, val int64) {
+	mb.metricGithubCommitsFriday.recordDataPoint(mb.startTime, ts, val)
 }
 
-// RecordCommitsMondayDataPoint adds a data point to commits.monday metric.
-func (mb *MetricsBuilder) RecordCommitsMondayDataPoint(ts pcommon.Timestamp, val int64) {
-	mb.metricCommitsMonday.recordDataPoint(mb.startTime, ts, val)
+// RecordGithubCommitsMondayDataPoint adds a data point to github.commits.monday metric.
+func (mb *MetricsBuilder) RecordGithubCommitsMondayDataPoint(ts pcommon.Timestamp, val int64) {
+	mb.metricGithubCommitsMonday.recordDataPoint(mb.startTime, ts, val)
 }
 
-// RecordCommitsSaturdayDataPoint adds a data point to commits.saturday metric.
-func (mb *MetricsBuilder) RecordCommitsSaturdayDataPoint(ts pcommon.Timestamp, val int64) {
-	mb.metricCommitsSaturday.recordDataPoint(mb.startTime, ts, val)
+// RecordGithubCommitsSaturdayDataPoint adds a data point to github.commits.saturday metric.
+func (mb *MetricsBuilder) RecordGithubCommitsSaturdayDataPoint(ts pcommon.Timestamp, val int64) {
+	mb.metricGithubCommitsSaturday.recordDataPoint(mb.startTime, ts, val)
 }
 
-// RecordCommitsSundayDataPoint adds a data point to commits.sunday metric.
-func (mb *MetricsBuilder) RecordCommitsSundayDataPoint(ts pcommon.Timestamp, val int64) {
-	mb.metricCommitsSunday.recordDataPoint(mb.startTime, ts, val)
+// RecordGithubCommitsSundayDataPoint adds a data point to github.commits.sunday metric.
+func (mb *MetricsBuilder) RecordGithubCommitsSundayDataPoint(ts pcommon.Timestamp, val int64) {
+	mb.metricGithubCommitsSunday.recordDataPoint(mb.startTime, ts, val)
 }
 
-// RecordCommitsThursdayDataPoint adds a data point to commits.thursday metric.
-func (mb *MetricsBuilder) RecordCommitsThursdayDataPoint(ts pcommon.Timestamp, val int64) {
-	mb.metricCommitsThursday.recordDataPoint(mb.startTime, ts, val)
+// RecordGithubCommitsThursdayDataPoint adds a data point to github.commits.thursday metric.
+func (mb *MetricsBuilder) RecordGithubCommitsThursdayDataPoint(ts pcommon.Timestamp, val int64) {
+	mb.metricGithubCommitsThursday.recordDataPoint(mb.startTime, ts, val)
 }
 
-// RecordCommitsTotalWeeklyDataPoint adds a data point to commits.total.weekly metric.
-func (mb *MetricsBuilder) RecordCommitsTotalWeeklyDataPoint(ts pcommon.Timestamp, val int64) {
-	mb.metricCommitsTotalWeekly.recordDataPoint(mb.startTime, ts, val)
+// RecordGithubCommitsTotalWeeklyDataPoint adds a data point to github.commits.total.weekly metric.
+func (mb *MetricsBuilder) RecordGithubCommitsTotalWeeklyDataPoint(ts pcommon.Timestamp, val int64) {
+	mb.metricGithubCommitsTotalWeekly.recordDataPoint(mb.startTime, ts, val)
 }
 
-// RecordCommitsTotalYtdDataPoint adds a data point to commits.total.ytd metric.
-func (mb *MetricsBuilder) RecordCommitsTotalYtdDataPoint(ts pcommon.Timestamp, val int64) {
-	mb.metricCommitsTotalYtd.recordDataPoint(mb.startTime, ts, val)
+// RecordGithubCommitsTuesdayDataPoint adds a data point to github.commits.tuesday metric.
+func (mb *MetricsBuilder) RecordGithubCommitsTuesdayDataPoint(ts pcommon.Timestamp, val int64) {
+	mb.metricGithubCommitsTuesday.recordDataPoint(mb.startTime, ts, val)
 }
 
-// RecordCommitsTuesdayDataPoint adds a data point to commits.tuesday metric.
-func (mb *MetricsBuilder) RecordCommitsTuesdayDataPoint(ts pcommon.Timestamp, val int64) {
-	mb.metricCommitsTuesday.recordDataPoint(mb.startTime, ts, val)
-}
-
-// RecordCommitsWednesdayDataPoint adds a data point to commits.wednesday metric.
-func (mb *MetricsBuilder) RecordCommitsWednesdayDataPoint(ts pcommon.Timestamp, val int64) {
-	mb.metricCommitsWednesday.recordDataPoint(mb.startTime, ts, val)
+// RecordGithubCommitsWednesdayDataPoint adds a data point to github.commits.wednesday metric.
+func (mb *MetricsBuilder) RecordGithubCommitsWednesdayDataPoint(ts pcommon.Timestamp, val int64) {
+	mb.metricGithubCommitsWednesday.recordDataPoint(mb.startTime, ts, val)
 }
 
 // Reset resets metrics builder to its initial state. It should be used when external metrics source is restarted,

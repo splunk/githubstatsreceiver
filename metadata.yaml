@@ -14,67 +14,61 @@ resource_attributes:
     description: Repository owners username
 
 metrics:
-  codechanges.additions: 
+  github.codechanges.additions: 
     enabled: true
     description: Code additions to repo 
     unit: 1
     gauge:
       value_type: int
-  codechanges.deletions: 
+  github.codechanges.deletions: 
     enabled: true
     description: Code deletions to repo 
     unit: 1
     gauge:
       value_type: int
-  commits.total.ytd:
-    enabled: true
-    description: Number of total commits YTD
-    unit: 1
-    gauge:
-      value_type: int
-  commits.total.weekly:
+  github.commits.total.weekly:
     enabled: true
     description: Number of total commits this week (beginning Sunday)
     unit: 1
     gauge:
       value_type: int
-  commits.sunday:
+  github.commits.sunday:
     enabled: true
     description: Number of commits on Sunday
     unit: 1
     gauge:
       value_type: int 
-  commits.monday:
+  github.commits.monday:
     enabled: true
     description: Number of commits on Monday
     unit: 1
     gauge:
       value_type: int
-  commits.tuesday:
+  github.commits.tuesday:
     enabled: true
     description: Number of commits on Tuesday 
     unit: 1
     gauge:
       value_type: int
-  commits.wednesday:
+  github.commits.wednesday:
     enabled: true
     description: Number of commits on Wednesday
     unit: 1
     gauge:
       value_type: int
-  commits.thursday:
+  github.commits.thursday:
     enabled: true
     description: Number of commits on Thursday
     unit: 1
     gauge:
       value_type: int
-  commits.friday:
+  github.commits.friday:
     enabled: true
     description: Number of commits on Friday
     unit: 1
     gauge:
       value_type: int
-  commits.saturday:
+  github.commits.saturday:
     enabled: true
     description: Number of commits on Saturday
     unit: 1

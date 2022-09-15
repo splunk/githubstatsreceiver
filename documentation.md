@@ -8,17 +8,16 @@ These are the metrics available for this scraper.
 
 | Name | Description | Unit | Type | Attributes |
 | ---- | ----------- | ---- | ---- | ---------- |
-| **codechanges.additions** | Code additions to repo | 1 | Gauge(Int) | <ul> </ul> |
-| **codechanges.deletions** | Code deletions to repo | 1 | Gauge(Int) | <ul> </ul> |
-| **commits.friday** | Number of commits on Friday | 1 | Gauge(Int) | <ul> </ul> |
-| **commits.monday** | Number of commits on Monday | 1 | Gauge(Int) | <ul> </ul> |
-| **commits.saturday** | Number of commits on Saturday | 1 | Gauge(Int) | <ul> </ul> |
-| **commits.sunday** | Number of commits on Sunday | 1 | Gauge(Int) | <ul> </ul> |
-| **commits.thursday** | Number of commits on Thursday | 1 | Gauge(Int) | <ul> </ul> |
-| **commits.total.weekly** | Number of total commits this week (beginning Sunday) | 1 | Gauge(Int) | <ul> </ul> |
-| **commits.total.ytd** | Number of total commits YTD | 1 | Gauge(Int) | <ul> </ul> |
-| **commits.tuesday** | Number of commits on Tuesday | 1 | Gauge(Int) | <ul> </ul> |
-| **commits.wednesday** | Number of commits on Wednesday | 1 | Gauge(Int) | <ul> </ul> |
+| **github.codechanges.additions** | Code additions to repo | 1 | Gauge(Int) | <ul> </ul> |
+| **github.codechanges.deletions** | Code deletions to repo | 1 | Gauge(Int) | <ul> </ul> |
+| **github.commits.friday** | Number of commits on Friday | 1 | Gauge(Int) | <ul> </ul> |
+| **github.commits.monday** | Number of commits on Monday | 1 | Gauge(Int) | <ul> </ul> |
+| **github.commits.saturday** | Number of commits on Saturday | 1 | Gauge(Int) | <ul> </ul> |
+| **github.commits.sunday** | Number of commits on Sunday | 1 | Gauge(Int) | <ul> </ul> |
+| **github.commits.thursday** | Number of commits on Thursday | 1 | Gauge(Int) | <ul> </ul> |
+| **github.commits.total.weekly** | Number of total commits this week (beginning Sunday) | 1 | Gauge(Int) | <ul> </ul> |
+| **github.commits.tuesday** | Number of commits on Tuesday | 1 | Gauge(Int) | <ul> </ul> |
+| **github.commits.wednesday** | Number of commits on Wednesday | 1 | Gauge(Int) | <ul> </ul> |
 
 **Highlighted metrics** are emitted by default. Other metrics are optional and not emitted by default.
 Any metric can be enabled or disabled with the following scraper configuration:
