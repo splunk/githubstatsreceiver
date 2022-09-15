@@ -149,7 +149,7 @@ func (client defaultGithubMetricsClient) getRepoChanges(ctx context.Context, c C
 }
 
 func (client defaultGithubMetricsClient) getCommitStats(ctx context.Context, c Config) (*commitActivity, error) {
-    p := fmt.Sprintf("/repost/%s/%s/stats/code_frequency", c.GitUsername, c.RepoName)
+    p := fmt.Sprintf("/repos/%s/%s/stats/code_frequency", c.GitUsername, c.RepoName)
     body, err := client.makeRequest(ctx, p)
     if err != nil {
         return nil, err
