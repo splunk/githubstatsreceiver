@@ -120,7 +120,6 @@ func (client defaultGithubMetricsClient) makeRequest(ctx context.Context, p stri
         zap.ByteString("body", body),
         zap.NamedError("body_read_error", err),
         )
-
     switch r.StatusCode {
     case 403:
         return nil, errUnauthorized
@@ -131,7 +130,7 @@ func (client defaultGithubMetricsClient) makeRequest(ctx context.Context, p stri
         time.Sleep(1 * time.Second)
         return client.makeRequest(ctx, p)
     default:
-        return nil, fmt.Errorf("non 200 status returned: %d", r.StatusCode)
+        return nil, fmt.Errorf("non 200 status returned: %d. endpoint: %s", r.StatusCode, endpoint.String())
     }
 }
 
