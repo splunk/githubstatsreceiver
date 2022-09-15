@@ -80,8 +80,8 @@ func (s *githubMetricsScraper) scrapeCommitStats(ctx context.Context, t pcommon.
         return
     }
 
-    s.mb.RecordCodechangesAdditionsDataPoint(t, commitStats.Insertions)
-    s.mb.RecordCodechangesDeletionsDataPoint(t, commitStats.Deletions)
+    s.mb.RecordCodechangesAdditionsDataPoint(t, int64(commitStats.Insertions))
+    s.mb.RecordCodechangesDeletionsDataPoint(t, int64(commitStats.Deletions))
 
     return
 }
