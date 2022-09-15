@@ -42,6 +42,7 @@ type header struct {
 type githubMetricsClient interface {
     getRepoChanges(ctx context.Context, c Config) (*commitStats, error)
     getCommitStats(ctx context.Context, c Config) (*commitActivity, error)
+    logInfo(msg string)
 }
 
 var _ githubMetricsClient = (*defaultGithubMetricsClient)(nil)
@@ -75,6 +76,10 @@ func newDefaultClient(settings component.TelemetrySettings, c Config, h componen
     }, nil
 }
 
+func (client defaultGithubMetricsClient) logInfo(msg string) {
+    client.logger.Info(fmt.Sprintf("%s", msg))
+    return
+}
 // generic method to build and submit a request
 func (client defaultGithubMetricsClient) makeRequest(ctx context.Context, p string) ([]byte, error) {
     // build your endpoint
@@ -151,6 +156,7 @@ func (client defaultGithubMetricsClient) getCommitStats(ctx context.Context, c C
         return nil, err
     }
 
+    client.logger.Info("hello from getCommitStats")
     comAct, err := newCommitActivity(body)
 
     return comAct, err

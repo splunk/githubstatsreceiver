@@ -18,7 +18,9 @@ import (
 // define default values as constants here
 const (
     typeStr         = "githubmetrics"
-    defaultInterval = 60 * time.Minute
+    // actual default
+    //defaultInterval = 60 * time.Minute
+    defaultInterval = 5 * time.Second
     defaultEndpoint = "https://api.github.com"
     defaultTimeout  = 10 * time.Second
 )

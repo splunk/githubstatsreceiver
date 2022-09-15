@@ -35,9 +35,9 @@ func (cfg *Config) Validate() error {
         return fmt.Errorf("A valid API key is required for the snowflake receiver")
     }
 
-    if (cfg.CollectionInterval.Minutes() < 60) {
-        return fmt.Errorf("Interval must be set to at least 1 hour")
-    }
+    //if (cfg.CollectionInterval.Minutes() < 60) {
+    //    return fmt.Errorf("Interval must be set to at least 1 hour")
+    //}
     
     return nil
 }

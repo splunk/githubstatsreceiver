@@ -34,6 +34,7 @@ func newGithubMetricsScraper(settings component.ReceiverCreateSettings, conf *Co
 // scraperhelper API.
 func (s *githubMetricsScraper) start(_ context.Context, h component.Host) (err error) {
     s.client, err = newDefaultClient(s.settings, *s.conf, h)
+    s.client.logInfo("client created")
     return
 }
 
