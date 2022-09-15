@@ -4,6 +4,7 @@ package githubstatsreceiver
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"testing"
 
@@ -28,7 +29,9 @@ func TestGetRepoChanges(t *testing.T) {
     err := json.Unmarshal(payload, &commstats)
 
     assert.Equal(t, err, nil)
-    assert.Equal(t, commstats[len(commstats)-1].WeekStamp, int64(1662249600))
+    assert.Equal(t, int64(1662249600), commstats[len(commstats)-1].WeekStamp)
+    assert.Equal(t, int64(0), int64(commstats[len(commstats)-1].Days[0].(float64)))
+    fmt.Printf("%T\n", commstats[len(commstats)-1].Days[0])
 }
 
 func TestGetCommitStats(t *testing.T) {
@@ -37,5 +40,7 @@ func TestGetCommitStats(t *testing.T) {
     comAct, err := newCommitActivity(payload)
 
     assert.Equal(t, err, nil)
-    assert.Equal(t, comAct.WeekStamp, int64(1662249600))
+    assert.Equal(t, int64(1662249600), comAct.WeekStamp)
+    assert.Equal(t, int64(-22), comAct.Deletions)
+    assert.Equal(t, int64(54), comAct.Insertions)
 }

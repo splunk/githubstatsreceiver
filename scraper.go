@@ -59,13 +59,13 @@ func (s *githubMetricsScraper) scrapeRepoChanges(ctx context.Context, t pcommon.
         return
     }
 
-    s.mb.RecordCommitsSundayDataPoint(t, repoChanges.Days[0].(int64))
-    s.mb.RecordCommitsMondayDataPoint(t, repoChanges.Days[1].(int64))
-    s.mb.RecordCommitsTuesdayDataPoint(t, repoChanges.Days[2].(int64))
-    s.mb.RecordCommitsWednesdayDataPoint(t, repoChanges.Days[3].(int64))
-    s.mb.RecordCommitsThursdayDataPoint(t, repoChanges.Days[4].(int64))
-    s.mb.RecordCommitsFridayDataPoint(t, repoChanges.Days[5].(int64))
-    s.mb.RecordCommitsSaturdayDataPoint(t, repoChanges.Days[6].(int64))
+    s.mb.RecordCommitsSundayDataPoint(t, int64(repoChanges.Days[0].(float64)))
+    s.mb.RecordCommitsMondayDataPoint(t, int64(repoChanges.Days[1].(float64)))
+    s.mb.RecordCommitsTuesdayDataPoint(t, int64(repoChanges.Days[2].(float64)))
+    s.mb.RecordCommitsWednesdayDataPoint(t, int64(repoChanges.Days[3].(float64)))
+    s.mb.RecordCommitsThursdayDataPoint(t, int64(repoChanges.Days[4].(float64)))
+    s.mb.RecordCommitsFridayDataPoint(t, int64(repoChanges.Days[5].(float64)))
+    s.mb.RecordCommitsSaturdayDataPoint(t, int64(repoChanges.Days[6].(float64)))
 
     s.mb.RecordCommitsTotalWeeklyDataPoint(t, repoChanges.TotalCommits)
     s.mb.RecordCommitsTotalYtdDataPoint(t, repoChanges.TotalCommits)
