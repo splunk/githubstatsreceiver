@@ -1,7 +1,7 @@
 receivers:
   githubmetrics:
     metrics:
-      codechanges.additions:
+      github.codechanges.additions:
         enabled: true
     api_key: abc123
     repo_name:
