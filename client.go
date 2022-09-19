@@ -40,8 +40,8 @@ type header struct {
 }
 
 type githubMetricsClient interface {
-    getRepoChanges(ctx context.Context, c Config) (*commitStats, error)
-    getCommitStats(ctx context.Context, c Config) (*commitActivity, error)
+    getRepoChanges(ctx context.Context, c Config) (*map[string]commitStats, error)
+    getCommitStats(ctx context.Context, c Config) (*map[string]*commitActivity, error)
     logInfo(msg string)
 }
 
@@ -120,6 +120,7 @@ func (client defaultGithubMetricsClient) makeRequest(ctx context.Context, p stri
         zap.ByteString("body", body),
         zap.NamedError("body_read_error", err),
         )
+
     switch r.StatusCode {
     case 403:
         return nil, errUnauthorized
@@ -135,30 +136,49 @@ func (client defaultGithubMetricsClient) makeRequest(ctx context.Context, p stri
 }
 
 // these wrap the generic request function for each endpoint we want to hit.
-func (client defaultGithubMetricsClient) getRepoChanges(ctx context.Context, c Config) (*commitStats, error) {
-    p := fmt.Sprintf("/repos/%s/%s/stats/commit_activity", c.GitUsername, c.RepoName) 
-    body, err := client.makeRequest(ctx, p)
-    if err != nil {
-        return nil, err
+func (client defaultGithubMetricsClient) getRepoChanges(ctx context.Context, c Config) (*map[string]commitStats, error) {
+    repChanges := make(map[string]commitStats)
+    error := errors.New("")
+    for _, repo := range c.RepoName {
+        p := fmt.Sprintf("/repos/%s/%s/stats/commit_activity", c.GitUsername, repo) 
+        body, err := client.makeRequest(ctx, p)
+        if err != nil {
+            error = fmt.Errorf("%w; %v", error, err) 
+        }
+        comstats := []commitStats{}
+        err = json.Unmarshal(body, &comstats)
+        if err != nil {
+            error = fmt.Errorf("%w; %v", error, err)
+        }
+        repChanges[repo] = comstats[len(comstats)-1]
     }
     
-    comstats := []commitStats{}
 
-    err = json.Unmarshal(body, &comstats)
-    return &comstats[len(comstats)-1], err
+    return &repChanges, error
 }
 
-func (client defaultGithubMetricsClient) getCommitStats(ctx context.Context, c Config) (*commitActivity, error) {
-    p := fmt.Sprintf("/repos/%s/%s/stats/code_frequency", c.GitUsername, c.RepoName)
-    body, err := client.makeRequest(ctx, p)
-    if err != nil {
-        return nil, err
+// same as above
+func (client defaultGithubMetricsClient) getCommitStats(ctx context.Context, c Config) (*map[string]*commitActivity, error) {
+    // map keeps track of what repo returned what result.
+    comStats := make(map[string]*commitActivity)
+    // chaining errors for downstream consumption
+    error := errors.New("")
+    for _, repo := range c.RepoName {
+        p := fmt.Sprintf("/repos/%s/%s/stats/code_frequency", c.GitUsername, c.RepoName)
+        body, err := client.makeRequest(ctx, p)
+        if err != nil {
+            return nil, err
+        }
+
+        client.logger.Info("hello from getCommitStats")
+        comAct, err := newCommitActivity(body)
+        if err != nil {
+            error = fmt.Errorf("%w; %v", error, err)
+        }
+        comStats[repo] = comAct
     }
 
-    client.logger.Info("hello from getCommitStats")
-    comAct, err := newCommitActivity(body)
-
-    return comAct, err
+    return &comStats, error
 }
 
 

@@ -4,7 +4,10 @@ receivers:
       codechanges.additions:
         enabled: true
     api_key: abc123
-    repo_name: truck
+    repo_name:
+      - truck
+      - beeper
+      - small_truck
     git_username: buck
     collection_interval: 3600s
 exporters:

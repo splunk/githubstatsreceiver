@@ -7,6 +7,7 @@ package githubstatsreceiver
 import (
 	"context"
 	"time"
+    "fmt"
 
 	"github.com/splunk/githubstatsreceiver/internal/metadata"
 	"go.opentelemetry.io/collector/component"
@@ -53,34 +54,45 @@ func (s *githubMetricsScraper) scrape(ctx context.Context) (pmetric.Metrics, err
 
 // wrapper functions for each different endpoint. Also contains the operations to insert the values into the metrics
 func (s *githubMetricsScraper) scrapeRepoChanges(ctx context.Context, t pcommon.Timestamp, errs *scrapererror.ScrapeErrors) {
-    repoChanges, err := s.client.getRepoChanges(ctx, *s.conf)
-    if err != nil {
+  repoChanges, err := s.client.getRepoChanges(ctx, *s.conf)
+
+  // err is never null
+    if fmt.Sprintf("%v", err) != "" {
         errs.Add(err)
         return
     }
 
-    s.mb.RecordGithubCommitsSundayDataPoint(t, int64(repoChanges.Days[0].(float64)))
-    s.mb.RecordGithubCommitsMondayDataPoint(t, int64(repoChanges.Days[1].(float64)))
-    s.mb.RecordGithubCommitsTuesdayDataPoint(t, int64(repoChanges.Days[2].(float64)))
-    s.mb.RecordGithubCommitsWednesdayDataPoint(t, int64(repoChanges.Days[3].(float64)))
-    s.mb.RecordGithubCommitsThursdayDataPoint(t, int64(repoChanges.Days[4].(float64)))
-    s.mb.RecordGithubCommitsFridayDataPoint(t, int64(repoChanges.Days[5].(float64)))
-    s.mb.RecordGithubCommitsSaturdayDataPoint(t, int64(repoChanges.Days[6].(float64)))
 
-    s.mb.RecordGithubCommitsTotalWeeklyDataPoint(t, repoChanges.TotalCommits)
+  for name, repo := range *repoChanges {
+    s.mb.RecordGithubCommitsSundayDataPoint(t, int64(repo.Days[0].(float64)))
+    s.mb.RecordGithubCommitsMondayDataPoint(t, int64(repo.Days[1].(float64)))
+    s.mb.RecordGithubCommitsTuesdayDataPoint(t, int64(repo.Days[2].(float64)))
+    s.mb.RecordGithubCommitsWednesdayDataPoint(t, int64(repo.Days[3].(float64)))
+    s.mb.RecordGithubCommitsThursdayDataPoint(t, int64(repo.Days[4].(float64)))
+    s.mb.RecordGithubCommitsFridayDataPoint(t, int64(repo.Days[5].(float64)))
+    s.mb.RecordGithubCommitsSaturdayDataPoint(t, int64(repo.Days[6].(float64)))
+
+    s.mb.RecordGithubCommitsTotalWeeklyDataPoint(t, repo.TotalCommits)
+    
+    s.mb.EmitForResource(metadata.WithGithubRepoName(name), metadata.WithGithubRepoUsername(s.conf.GitUsername))
+  }
 
     return
 }
 
 func (s *githubMetricsScraper) scrapeCommitStats(ctx context.Context, t pcommon.Timestamp, errs *scrapererror.ScrapeErrors) {
     commitStats, err := s.client.getCommitStats(ctx, *s.conf)
-    if err != nil {
+
+    
+    if fmt.Sprintf("%v", err) != "" {
         errs.Add(err)
         return
     }
-
-    s.mb.RecordGithubCodechangesAdditionsDataPoint(t, int64(commitStats.Insertions))
-    s.mb.RecordGithubCodechangesDeletionsDataPoint(t, int64(commitStats.Deletions))
-
+  
+  for name, repo := range *commitStats {
+    s.mb.RecordGithubCodechangesAdditionsDataPoint(t, int64(repo.Insertions))
+    s.mb.RecordGithubCodechangesDeletionsDataPoint(t, int64(repo.Deletions))
+    s.mb.EmitForResource(metadata.WithGithubRepoName(name), metadata.WithGithubRepoUsername(s.conf.GitUsername))
+  }
     return
 }

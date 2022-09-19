@@ -18,13 +18,13 @@ type Config struct {
     confighttp.HTTPClientSettings           `mapstructure:",squash"`
     Metrics      metadata.MetricsSettings   `mapstructure:"metrics"`
     APIKey       string                     `mapstructure:"api_key"`
-    RepoName     string                     `mapstructure:"repo_name"`
+    RepoName     []string                   `mapstructure:"repo_name"`
     GitUsername  string                     `mapstructure:"git_username"`
 }
 
 func (cfg *Config) Validate() error {
-    if (cfg.RepoName == "") {
-        return fmt.Errorf("You must provide a valid repository name")
+    if (len(cfg.RepoName) == 0) {
+        return fmt.Errorf("You must provide at least one valid repository name")
     }
 
     if (cfg.GitUsername == "") {
