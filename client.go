@@ -140,6 +140,7 @@ func (client defaultGithubMetricsClient) getRepoChanges(ctx context.Context, c C
     repChanges := make(map[string]commitStats)
     error := errors.New("")
     for _, repo := range c.RepoName {
+        client.logger.Info(fmt.Sprintf("%v", repo))
         p := fmt.Sprintf("/repos/%s/%s/stats/commit_activity", c.GitUsername, repo) 
         body, err := client.makeRequest(ctx, p)
         if err != nil {
@@ -164,7 +165,7 @@ func (client defaultGithubMetricsClient) getCommitStats(ctx context.Context, c C
     // chaining errors for downstream consumption
     error := errors.New("")
     for _, repo := range c.RepoName {
-        p := fmt.Sprintf("/repos/%s/%s/stats/code_frequency", c.GitUsername, c.RepoName)
+        p := fmt.Sprintf("/repos/%s/%s/stats/code_frequency", c.GitUsername, repo)
         body, err := client.makeRequest(ctx, p)
         if err != nil {
             return nil, err
